@@ -373,26 +373,23 @@ const DashboardProfesor = () => {
   const [completedAssessments, setCompletedAssessments] = useState([]);
 
   useEffect(() => {
-    let userFromState = location.state?.teacher;
-    console.log("location.state?.teacher:", userFromState);
+  const userFromState = location.state?.teacher;
 
-    if (userFromState) {
-      setTeacher(userFromState);
-      sessionStorage.setItem("teacher", JSON.stringify(userFromState));
+  if (userFromState) {
+    setTeacher(userFromState); // debes tener useState para teacher
+    localStorage.setItem("teacher", JSON.stringify(userFromState));
+    setLoading(false);
+  } else {
+    const teacherFromLocal = JSON.parse(localStorage.getItem("teacher"));
+    if (teacherFromLocal) {
+      setTeacher(teacherFromLocal);
       setLoading(false);
     } else {
-      const userFromSession = JSON.parse(sessionStorage.getItem("teacher"));
-      console.log("sessionStorage teacher:", userFromSession);
-
-      if (userFromSession) {
-        setTeacher(userFromSession);
-        setLoading(false);
-      } else {
-        console.log("No teacher found, redirecting...");
-        navigate("/", { replace: true });
-      }
+      navigate("/", { replace: true });
     }
-  }, [location.state, navigate]);
+  }
+}, [location.state, navigate]);
+
 
   useEffect(() => {
     if (teacher) {
@@ -692,15 +689,13 @@ const DashboardProfesor = () => {
   };
 
   const confirmLogout = () => {
-    setIsModalOpen(false);
-    sessionStorage.clear(); // Limpia todo el sessionStorage
-    localStorage.removeItem("token"); // Limpia token (si usas)
-
-    setTimeout(() => {
-      navigate("/", { replace: true }); // Redirige a login
-    }, 100);
-  };
-
+  setIsModalOpen(false);
+  localStorage.removeItem("teacher");
+  localStorage.removeItem("token"); // si usas token
+  setTimeout(() => {
+    navigate("/", { replace: true });
+  }, 100);
+};
   const organizeAssessmentsByDate = (assessments = []) => {
     const now = new Date();
 

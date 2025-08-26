@@ -5,12 +5,14 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import DashboardProfesor from "./pages/dashboard/DashboardProfesor.jsx";
 
 function App() {
-  const student = sessionStorage.getItem("student");
-  const isStudentLoggedIn =
-    student && student !== "null" && student !== "undefined";
-  const teacher = sessionStorage.getItem("teacher");
-  const isTeacherLoggedIn =
-    teacher && teacher !== "null" && teacher !== "undefined";
+  const student = localStorage.getItem("student");
+const isStudentLoggedIn =
+  student && student !== "null" && student !== "undefined";
+
+const teacher = localStorage.getItem("teacher");
+const isTeacherLoggedIn =
+  teacher && teacher !== "null" && teacher !== "undefined";
+
   return (
     <>
       <Routes>

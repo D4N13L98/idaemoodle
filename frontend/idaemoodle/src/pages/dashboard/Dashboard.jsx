@@ -259,7 +259,11 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const [student, setStudent] = useState(null);
+  const [student, setStudent] = useState(() => {
+    const saved = localStorage.getItem("student");
+    return saved ? JSON.parse(saved) : null;
+  });
+
   const [loading, setLoading] = useState(true);
   const [notasFormateadas, setNotasFormateadas] = useState(null);
   const [availableAssessments, setAvailableAssessments] = useState([]);
@@ -272,13 +276,13 @@ const Dashboard = () => {
     let userFromState = location.state?.student;
 
     if (userFromState) {
-      // Si viene por state, actualizo estado y guardo en sessionStorage
+      // Si viene por state, actualizo estado y guardo en localStorage
       setStudent(userFromState);
-      sessionStorage.setItem("student", JSON.stringify(userFromState));
+      localStorage.setItem("student", JSON.stringify(userFromState));
       setLoading(false);
     } else {
-      // Si no viene por state, intento cargar del sessionStorage
-      const userFromSession = JSON.parse(sessionStorage.getItem("student"));
+      // Si no viene por state, intento cargar del localStorage
+      const userFromSession = JSON.parse(localStorage.getItem("student"));
       if (userFromSession) {
         setStudent(userFromSession);
         setLoading(false);
@@ -457,11 +461,10 @@ const Dashboard = () => {
 
   const confirmLogout = () => {
     setIsModalOpen(false);
-    sessionStorage.clear(); // Limpia todo el sessionStorage
-    localStorage.removeItem("token"); // Limpia token (si usas)
-
+    localStorage.removeItem("student");
+    localStorage.removeItem("token"); // si usas token
     setTimeout(() => {
-      navigate("/", { replace: true }); // Redirige a login
+      navigate("/", { replace: true });
     }, 100);
   };
 
