@@ -131,6 +131,7 @@ const Login = () => {
           }
         );
         const data = await userId.json();
+        console.log(data)
         if (data.message === "Usuario encontrado") {
           if (data.data.grade === grade) {
             setMessage(
