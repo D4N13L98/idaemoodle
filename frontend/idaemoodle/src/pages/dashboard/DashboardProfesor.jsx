@@ -419,7 +419,13 @@ const DashboardProfesor = () => {
         );
         const dataStu = await resStu.json();
         const students = dataStu.data.filter((s) => s.grade === grade);
-        setStuCount(students);
+        const sortedStudents = students.sort((a, b) => {
+          if (a.name < b.name) return -1; // a va antes que b
+          if (a.name > b.name) return 1; // b va antes que a
+          return 0; // si son iguales
+        });
+
+        setStuCount(sortedStudents); // Actualiza el estado con los estudiantes ordenados
 
         // 2. Traer intentos
         const resAtt = await fetch(
