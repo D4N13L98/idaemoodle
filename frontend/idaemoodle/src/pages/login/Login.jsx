@@ -139,7 +139,7 @@ const Login = () => {
             );
             setIsModalOpen(true);
             setTimeout(() => {
-              localStorage.setItem("student", JSON.stringify(data.data)); // guardamos
+              sessionStorage.setItem("student", JSON.stringify(data.data)); // guardamos
               navigate("/dashboards", { state: { student: data.data } }); // pasamos por state
             }, 2500);
           } else {
@@ -171,7 +171,7 @@ const Login = () => {
             setIsModalOpen(true);
             setIsModalOpen(true);
             setTimeout(() => {
-              localStorage.setItem("teacher", JSON.stringify(data.data)); // guardamos
+              sessionStorage.setItem("teacher", JSON.stringify(data.data)); // guardamos
               navigate("/dashboardt", { state: { teacher: data.data } }); // pasamos por state
             }, 2500);
           } else {

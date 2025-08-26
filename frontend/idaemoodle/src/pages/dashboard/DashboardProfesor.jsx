@@ -338,10 +338,13 @@ const initials = (name = "") => {
 };
 
 const DashboardProfesor = () => {
-  const [teacher, setTeacher] = useState(null);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
+  const [teacher, setTeacher] = useState(() => {
+    const saved = sessionStorage.getItem("teacher");
+    return saved ? JSON.parse(saved) : null;
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chooseStudents, setChooseStudents] = useState(false);
   const [isCreatedModal, setIsCreatedModal] = useState(false);
@@ -373,23 +376,26 @@ const DashboardProfesor = () => {
   const [completedAssessments, setCompletedAssessments] = useState([]);
 
   useEffect(() => {
-  const userFromState = location.state?.teacher;
+    // Primero intento obtener el usuario de location.state
+    let userFromState = location.state?.student;
 
-  if (userFromState) {
-    setTeacher(userFromState); // debes tener useState para teacher
-    localStorage.setItem("teacher", JSON.stringify(userFromState));
-    setLoading(false);
-  } else {
-    const teacherFromLocal = JSON.parse(localStorage.getItem("teacher"));
-    if (teacherFromLocal) {
-      setTeacher(teacherFromLocal);
+    if (userFromState) {
+      // Si viene por state, actualizo estado y guardo en localStorage
+      setTeacher(userFromState);
+      sessionStorage.setItem("student", JSON.stringify(userFromState));
       setLoading(false);
     } else {
-      navigate("/", { replace: true });
+      // Si no viene por state, intento cargar del localStorage
+      const userFromSession = JSON.parse(sessionStorage.getItem("student"));
+      if (userFromSession) {
+        setTeacher(userFromSession);
+        setLoading(false);
+      } else {
+        // Si no hay usuario, redirijo a login
+        navigate("/", { replace: true });
+      }
     }
-  }
-}, [location.state, navigate]);
-
+  }, [location.state, navigate]);
 
   useEffect(() => {
     if (teacher) {
@@ -689,13 +695,13 @@ const DashboardProfesor = () => {
   };
 
   const confirmLogout = () => {
-  setIsModalOpen(false);
-  localStorage.removeItem("teacher");
-  localStorage.removeItem("token"); // si usas token
-  setTimeout(() => {
-    navigate("/", { replace: true });
-  }, 100);
-};
+    setIsModalOpen(false);
+    localStorage.removeItem("teacher");
+    localStorage.removeItem("token"); // si usas token
+    setTimeout(() => {
+      navigate("/", { replace: true });
+    }, 100);
+  };
   const organizeAssessmentsByDate = (assessments = []) => {
     const now = new Date();
 
