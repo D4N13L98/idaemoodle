@@ -382,11 +382,11 @@ const DashboardProfesor = () => {
     if (userFromState) {
       // Si viene por state, actualizo estado y guardo en localStorage
       setTeacher(userFromState);
-      localStorage.setItem("student", JSON.stringify(userFromState));
+      localStorage.setItem("teacher", JSON.stringify(userFromState));
       setLoading(false);
     } else {
       // Si no viene por state, intento cargar del localStorage
-      const userFromSession = JSON.parse(localStorage.getItem("student"));
+      const userFromSession = JSON.parse(localStorage.getItem("teacher"));
       if (userFromSession) {
         setTeacher(userFromSession);
         setLoading(false);
@@ -697,6 +697,7 @@ const DashboardProfesor = () => {
   const confirmLogout = () => {
     setIsModalOpen(false);
     localStorage.removeItem("teacher");
+    localStorage.removeItem("student");
     localStorage.removeItem("token"); // si usas token
     setTimeout(() => {
       navigate("/", { replace: true });

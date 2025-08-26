@@ -461,6 +461,7 @@ const Dashboard = () => {
   const confirmLogout = () => {
     setIsModalOpen(false);
     localStorage.removeItem("student");
+    localStorage.removeItem("teacher");
     localStorage.removeItem("token"); // si usas token
     setTimeout(() => {
       navigate("/", { replace: true });

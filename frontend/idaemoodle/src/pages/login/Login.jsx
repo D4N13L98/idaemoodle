@@ -112,85 +112,89 @@ const Login = () => {
   const [id, setId] = useState("");
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (grade === "" || id === "" || userType === "") {
       setMessage("Para continuar debe ingresar sus credenciales");
       setIsModalOpen(true);
-    } else {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
       if (userType === "Estudiante") {
-        const userId = await fetch(
-          `https://idaemoodle.onrender.com/idaemoodle/students/searchStudent/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+        localStorage.removeItem("teacher");
+        const res = await fetch(
+          `https://idaemoodle.onrender.com/idaemoodle/students/searchStudent/${id}`
         );
-        const data = await userId.json();
-        console.log(data);
-        if (data.message === "Usuario encontrado") {
-          if (data.data.grade === grade) {
-            setMessage(
-              `Ha ingresado correctamente, bienvenido/a ${data.data.name}`
-            );
-            setIsModalOpen(true);
-            setTimeout(() => {
-              localStorage.setItem("student", JSON.stringify(data.data)); // guardamos
-              navigate("/dashboards", { state: { student: data.data } }); // pasamos por state
-            }, 2500);
-          } else {
-            setMessage(`El código no corresponde al curso ${grade}`);
-            setIsModalOpen(true);
-          }
-        } else {
+        const data = await res.json();
+
+        if (
+          data.message === "Usuario encontrado" &&
+          data.data.grade === grade
+        ) {
+          localStorage.setItem("student", JSON.stringify(data.data));
           setMessage(
-            "No se encontró ningún estudiante registrado con este código"
+            `Ha ingresado correctamente, bienvenido/a ${data.data.name}`
           );
+          setIsModalOpen(true);
+          setTimeout(() => {
+            setIsLoading(false);
+            navigate("/dashboards", { state: { student: data.data } });
+          }, 2500);
+        } else {
+          setIsLoading(false);
+          setMessage("Código incorrecto o curso no coincide");
           setIsModalOpen(true);
         }
       } else if (userType === "Profesor") {
-        const teacherId = await fetch(
-          `https://idaemoodle.onrender.com/idaemoodle/teachers/searchTeacher/${id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+        localStorage.removeItem("student");
+        const res = await fetch(
+          `https://idaemoodle.onrender.com/idaemoodle/teachers/searchTeacher/${id}`
         );
-        const data = await teacherId.json();
-        if (data.message === "Usuario encontrado") {
-          if (data.data.id === Number(id)) {
-            setMessage(
-              `Bienvenido, ingresó correctamente como: ${data.data.name} docente de: ${data.data.subject}`
-            );
-            setIsModalOpen(true);
-            setIsModalOpen(true);
-            setTimeout(() => {
-              localStorage.setItem("teacher", JSON.stringify(data.data)); // guardamos
-              navigate("/dashboardt", { state: { teacher: data.data } }); // pasamos por state
-            }, 2500);
-          } else {
-            setMessage(`No coincide la contraseña`);
-            setIsModalOpen(true);
-          }
+        const data = await res.json();
+
+        if (
+          data.message === "Usuario encontrado" &&
+          data.data.id === Number(id)
+        ) {
+          localStorage.setItem("teacher", JSON.stringify(data.data));
+          setMessage(
+            `Bienvenido, ingresó correctamente como: ${data.data.name}`
+          );
+          setIsModalOpen(true);
+          setTimeout(() => {
+            setIsLoading(false);
+            navigate("/dashboardt", { state: { teacher: data.data } });
+          }, 2500);
         } else {
-          setMessage("No se encontró ningún profesor registrado con este id");
+          setIsLoading(false);
+          setMessage("Contraseña incorrecta o profesor no encontrado");
           setIsModalOpen(true);
         }
-      } else {
-        setMessage("Agrega un tipo de usuario correcto");
-        setIsModalOpen(true);
       }
+    } catch (error) {
+      setIsLoading(false);
+      setMessage("Error al conectar con el servidor");
+      setIsModalOpen(true);
     }
   };
-
   return (
     <Container>
+      {isLoading && (
+        <Modal
+          isOpen={isLoading}
+          message={"Iniciando sesión..."}
+          closeModal={() => {}}
+          disableClose={true} // para que no se cierre manualmente
+        />
+      )}
+
       <Card>
         <Logo
           src="http://www.adescolares.com.co/idaesaet/uploads/img_57d116bc6c7f56.14447985.jpg"
