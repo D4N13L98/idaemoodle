@@ -10,7 +10,9 @@ import attemptRouter from "../routes/attempt.routes.js"
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://idaemoodle.netlify.app'
+}));
 app.use("/idaemoodle/auth", router);
 
 app.use(express.urlencoded({ extended: false }));

@@ -412,7 +412,7 @@ const DashboardProfesor = () => {
       try {
         // 1. Traer estudiantes del curso
         const resStu = await fetch(
-          "http://localhost:5000/idaemoodle/students/searchStudents"
+          "https://idaemoodle.onrender.com/idaemoodle/students/searchStudents"
         );
         const dataStu = await resStu.json();
         const students = dataStu.data.filter((s) => s.grade === grade);
@@ -420,7 +420,7 @@ const DashboardProfesor = () => {
 
         // 2. Traer intentos
         const resAtt = await fetch(
-          "http://localhost:5000/idaemoodle/attempts/searchAttempts/"
+          "https://idaemoodle.onrender.com/idaemoodle/attempts/searchAttempts/"
         );
         const dataAtt = await resAtt.json();
         const allAttempts = dataAtt.data;
@@ -517,7 +517,7 @@ const DashboardProfesor = () => {
   const getAssessmentsByGrade = async (grade) => {
     try {
       const response = await fetch(
-        "http://localhost:5000/idaemoodle/assessments/searchAssessments",
+        "https://idaemoodle.onrender.com/idaemoodle/assessments/searchAssessments",
         {
           method: "GET",
           headers: {
@@ -657,7 +657,7 @@ const DashboardProfesor = () => {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/idaemoodle/assessments/createAssessment",
+        "https://idaemoodle.onrender.com/idaemoodle/assessments/createAssessment",
         {
           method: "POST",
           headers: {

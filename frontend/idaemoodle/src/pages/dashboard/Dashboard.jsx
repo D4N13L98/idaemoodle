@@ -290,126 +290,128 @@ const Dashboard = () => {
   }, [location.state, navigate]);
 
   useEffect(() => {
-  if (!student) return; // Evita ejecutar si student es null o undefined
+    if (!student) return; // Evita ejecutar si student es null o undefined
 
-  const fetchData = async () => {
-    try {
-      // 1. Traer intentos
-      const attemptsRes = await fetch(
-        "http://localhost:5000/idaemoodle/attempts/searchAttempts/",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!attemptsRes.ok) throw new Error("Error al traer intentos");
-      const attemptsData = await attemptsRes.json();
-      const allAttempts = attemptsData.data;
-
-      // 2. Filtrar intentos del estudiante actual
-      const studentAttempts = allAttempts.filter(
-        (a) => a.studentId === student.id
-      );
-
-      setStudentAttemptedCodes(
-        new Set(studentAttempts.map((a) => a.assessmentId))
-      );
-
-      // 3. Traer evaluaciones
-      const assessmentsRes = await fetch(
-        "http://localhost:5000/idaemoodle/assessments/searchAssessments",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!assessmentsRes.ok) throw new Error("Error al traer assessments");
-
-      const assessmentsData = await assessmentsRes.json();
-      const assessmentsGrade = assessmentsData.data.filter(
-        (assessment) => assessment.grade === student.grade
-      );
-
-      const assessmentsStudent = assessmentsGrade.filter((assessment) => {
-        if (!assessment.targetAudience || assessment.targetAudience.length === 0) {
-          return true;
-        } else {
-          return assessment.targetAudience.includes(String(student.id));
-        }
-      });
-
-      organizeAssessmentsByDate(assessmentsStudent);
-
-      // 4. Procesar notas
-      const grupos = {};
-      allAttempts.forEach((a) => {
-        if (a.group != null && a.groupAllow) {
-          const groupKey = Number(a.group);
-          if (!grupos[groupKey]) grupos[groupKey] = [];
-          grupos[groupKey].push(a);
-        }
-      });
-
-      const notas = {
-        id: student.id,
-        name: student.name,
-        V1: { individual: "-", group: "-" },
-        V2: { individual: "-", group: "-" },
-        V3: { individual: "-", group: "-" },
-        V4: { individual: "-", group: "-" },
-      };
-
-      studentAttempts.forEach((attempt) => {
-        const tipo = attempt.assessmentType;
-        const score = attempt.score;
-
-        if (notas[tipo]) {
-          notas[tipo].individual = score;
-
-          // Solo asignar nota grupal directa si NO es grupal
-          if (!attempt.groupAllow) {
-            notas[tipo].group = score;
+    const fetchData = async () => {
+      try {
+        // 1. Traer intentos
+        const attemptsRes = await fetch(
+          "https://idaemoodle.onrender.com/idaemoodle/attempts/searchAttempts/",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
           }
-        }
-      });
+        );
 
-      // Calcular promedios grupales
-      Object.keys(notas).forEach((tipo) => {
-        if (notas[tipo].group === "-") {
-          const groupAttempt = studentAttempts.find(
-            (a) => a.assessmentType === tipo && a.groupAllow
-          );
-          if (groupAttempt) {
-            const grupo = Number(groupAttempt.group);
-            if (!grupo || !grupos[grupo]) return;
-            const intentosGrupo = grupos[grupo]?.filter(
-              (a) => a.assessmentType === tipo
-            );
+        if (!attemptsRes.ok) throw new Error("Error al traer intentos");
+        const attemptsData = await attemptsRes.json();
+        const allAttempts = attemptsData.data;
 
-            if (intentosGrupo && intentosGrupo.length > 0) {
-              const promedio =
-                intentosGrupo.reduce((sum, a) => sum + a.score, 0) /
-                intentosGrupo.length;
-              notas[tipo].group = parseFloat(promedio.toFixed(2));
+        // 2. Filtrar intentos del estudiante actual
+        const studentAttempts = allAttempts.filter(
+          (a) => a.studentId === student.id
+        );
+
+        setStudentAttemptedCodes(
+          new Set(studentAttempts.map((a) => a.assessmentId))
+        );
+
+        // 3. Traer evaluaciones
+        const assessmentsRes = await fetch(
+          "https://idaemoodle.onrender.com/idaemoodle/assessments/searchAssessments",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!assessmentsRes.ok) throw new Error("Error al traer assessments");
+
+        const assessmentsData = await assessmentsRes.json();
+        const assessmentsGrade = assessmentsData.data.filter(
+          (assessment) => assessment.grade === student.grade
+        );
+
+        const assessmentsStudent = assessmentsGrade.filter((assessment) => {
+          if (
+            !assessment.targetAudience ||
+            assessment.targetAudience.length === 0
+          ) {
+            return true;
+          } else {
+            return assessment.targetAudience.includes(String(student.id));
+          }
+        });
+
+        organizeAssessmentsByDate(assessmentsStudent);
+
+        // 4. Procesar notas
+        const grupos = {};
+        allAttempts.forEach((a) => {
+          if (a.group != null && a.groupAllow) {
+            const groupKey = Number(a.group);
+            if (!grupos[groupKey]) grupos[groupKey] = [];
+            grupos[groupKey].push(a);
+          }
+        });
+
+        const notas = {
+          id: student.id,
+          name: student.name,
+          V1: { individual: "-", group: "-" },
+          V2: { individual: "-", group: "-" },
+          V3: { individual: "-", group: "-" },
+          V4: { individual: "-", group: "-" },
+        };
+
+        studentAttempts.forEach((attempt) => {
+          const tipo = attempt.assessmentType;
+          const score = attempt.score;
+
+          if (notas[tipo]) {
+            notas[tipo].individual = score;
+
+            // Solo asignar nota grupal directa si NO es grupal
+            if (!attempt.groupAllow) {
+              notas[tipo].group = score;
             }
           }
-        }
-      });
-      setNotasFormateadas(notas);
-    } catch (error) {
-      console.error("Error al traer datos:", error);
-    }
-  };
+        });
 
-  fetchData();
-}, [student, studentAttemptedCodes]);
+        // Calcular promedios grupales
+        Object.keys(notas).forEach((tipo) => {
+          if (notas[tipo].group === "-") {
+            const groupAttempt = studentAttempts.find(
+              (a) => a.assessmentType === tipo && a.groupAllow
+            );
+            if (groupAttempt) {
+              const grupo = Number(groupAttempt.group);
+              if (!grupo || !grupos[grupo]) return;
+              const intentosGrupo = grupos[grupo]?.filter(
+                (a) => a.assessmentType === tipo
+              );
 
+              if (intentosGrupo && intentosGrupo.length > 0) {
+                const promedio =
+                  intentosGrupo.reduce((sum, a) => sum + a.score, 0) /
+                  intentosGrupo.length;
+                notas[tipo].group = parseFloat(promedio.toFixed(2));
+              }
+            }
+          }
+        });
+        setNotasFormateadas(notas);
+      } catch (error) {
+        console.error("Error al traer datos:", error);
+      }
+    };
+
+    fetchData();
+  }, [student, studentAttemptedCodes]);
 
   const handleGo = (assessment) => {
     navigate("/assessments", { state: { student, assessment } });

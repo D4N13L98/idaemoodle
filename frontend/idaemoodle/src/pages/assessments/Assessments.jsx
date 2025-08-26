@@ -282,7 +282,7 @@ const Assessments = () => {
     const fetchQuestions = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/idaemoodle/questions/searchQuestions/${assessment.topic}`
+          `https://idaemoodle.onrender.com/idaemoodle/questions/searchQuestions/${assessment.topic}`
         );
         if (!res.ok) throw new Error("Error en la petición");
 
@@ -336,7 +336,7 @@ const Assessments = () => {
 
       try {
         const res = await fetch(
-          "http://localhost:5000/idaemoodle/attempts/createAttempt",
+          "https://idaemoodle.onrender.com/idaemoodle/attempts/createAttempt",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -424,7 +424,7 @@ const Assessments = () => {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/idaemoodle/attempts/createAttempt",
+        "https://idaemoodle.onrender.com/idaemoodle/attempts/createAttempt",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -548,7 +548,7 @@ const Assessments = () => {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/idaemoodle/attempts/createAttempt",
+        "https://idaemoodle.onrender.com/idaemoodle/attempts/createAttempt",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

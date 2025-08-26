@@ -122,7 +122,7 @@ const Login = () => {
     } else {
       if (userType === "Estudiante") {
         const userId = await fetch(
-          `http://localhost:5000/idaemoodle/students/searchStudent/${id}`,
+          `https://idaemoodle.onrender.com/idaemoodle/students/searchStudent/${id}`,
           {
             method: "GET",
             headers: {
@@ -153,7 +153,7 @@ const Login = () => {
         }
       } else if (userType === "Profesor") {
         const teacherId = await fetch(
-          `http://localhost:5000/idaemoodle/teachers/searchTeacher/${id}`,
+          `https://idaemoodle.onrender.com/idaemoodle/teachers/searchTeacher/${id}`,
           {
             method: "GET",
             headers: {
