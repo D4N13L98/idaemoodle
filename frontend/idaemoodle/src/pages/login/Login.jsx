@@ -131,7 +131,7 @@ const Login = () => {
           }
         );
         const data = await userId.json();
-        console.log(data)
+        console.log(data);
         if (data.message === "Usuario encontrado") {
           if (data.data.grade === grade) {
             setMessage(
@@ -139,7 +139,7 @@ const Login = () => {
             );
             setIsModalOpen(true);
             setTimeout(() => {
-              sessionStorage.setItem("student", JSON.stringify(data.data)); // guardamos
+              localStorage.setItem("student", JSON.stringify(data.data)); // guardamos
               navigate("/dashboards", { state: { student: data.data } }); // pasamos por state
             }, 2500);
           } else {
@@ -171,7 +171,7 @@ const Login = () => {
             setIsModalOpen(true);
             setIsModalOpen(true);
             setTimeout(() => {
-              sessionStorage.setItem("teacher", JSON.stringify(data.data)); // guardamos
+              localStorage.setItem("teacher", JSON.stringify(data.data)); // guardamos
               navigate("/dashboardt", { state: { teacher: data.data } }); // pasamos por state
             }, 2500);
           } else {

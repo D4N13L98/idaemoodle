@@ -260,7 +260,7 @@ const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [student, setStudent] = useState(() => {
-    const saved = sessionStorage.getItem("student");
+    const saved = localStorage.getItem("student");
     return saved ? JSON.parse(saved) : null;
   });
   const [loading, setLoading] = useState(true);
@@ -277,11 +277,11 @@ const Dashboard = () => {
     if (userFromState) {
       // Si viene por state, actualizo estado y guardo en localStorage
       setStudent(userFromState);
-      sessionStorage.setItem("student", JSON.stringify(userFromState));
+      localStorage.setItem("student", JSON.stringify(userFromState));
       setLoading(false);
     } else {
       // Si no viene por state, intento cargar del localStorage
-      const userFromSession = JSON.parse(sessionStorage.getItem("student"));
+      const userFromSession = JSON.parse(localStorage.getItem("student"));
       if (userFromSession) {
         setStudent(userFromSession);
         setLoading(false);

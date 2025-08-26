@@ -5,13 +5,11 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import DashboardProfesor from "./pages/dashboard/DashboardProfesor.jsx";
 
 function App() {
-  const student = sessionStorage.getItem("student");
-const isStudentLoggedIn =
-  student && student !== "null" && student !== "undefined";
+  const student = JSON.parse(localStorage.getItem("student"));
+  const isStudentLoggedIn = student !== null;
 
-const teacher = sessionStorage.getItem("teacher");
-const isTeacherLoggedIn =
-  teacher && teacher !== "null" && teacher !== "undefined";
+  const teacher = JSON.parse(localStorage.getItem("teacher"));
+  const isTeacherLoggedIn = teacher !== null;
 
   return (
     <>
