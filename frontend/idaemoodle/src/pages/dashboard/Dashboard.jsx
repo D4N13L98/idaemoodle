@@ -263,7 +263,6 @@ const Dashboard = () => {
     const saved = localStorage.getItem("student");
     return saved ? JSON.parse(saved) : null;
   });
-
   const [loading, setLoading] = useState(true);
   const [notasFormateadas, setNotasFormateadas] = useState(null);
   const [availableAssessments, setAvailableAssessments] = useState([]);
